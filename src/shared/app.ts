@@ -3,6 +3,8 @@ import cors from "cors";
 import helmet from "helmet";
 import dontev from "dotenv";
 
+import { router } from "@/routes";
+
 dontev.config();
 
 const app = express();
@@ -12,4 +14,7 @@ app.use(helmet());
 app.use(express.json());
 app.use(express.json({ limit: process.env.MAX_REQUEST_SIZE }));
 
+app.use(router);
+
 export { app };
+// REQ -> ROUTES -> CONTROLLER <-> USECASE <-> REPOSITORY <-> PRISMA <-> DATABASE
