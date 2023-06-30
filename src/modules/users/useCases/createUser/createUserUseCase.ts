@@ -1,6 +1,15 @@
-import { IRequestCreateUser } from "../../dto/users";
+import { v4 } from "uuid";
+import { encryptPassword } from "@/ultils/bcrypt";
+import { IRequestCreateUser } from "@modules/users/dto/users";
+import { UserRepository } from "@modules/users/repositories/userRepository";
+import { telephoneFormat } from "@/ultils/formatData";
 
 class CreateUserUseCase {
+  private userRepository: UserRepository;
+  constructor(userRepository = new UserRepository()) {
+    this.userRepository = userRepository;
+  }
+
   async execute({
     name,
     email,
@@ -9,7 +18,43 @@ class CreateUserUseCase {
     confirmPassword,
     telephone,
     birthDate,
-  }: IRequestCreateUser) {}
+  }: IRequestCreateUser): Promise<any> {
+    if (password !== confirmPassword) {
+      return new Error("As senhas não coincidem!");
+    }
+
+    if (
+      !password.match(
+        /(?=^.{8,}$)((?=.*\d)(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/
+      )
+    ) {
+      return { message: "Senha Fraca" };
+    }
+
+    if (email !== confirmEmail) {
+      return { message: "Os e-mails não coincidem!" };
+    }
+
+    const listUserByEmail = await this.userRepository.listByEmail(email);
+
+    if (listUserByEmail) {
+      return { message: "Usuário já cadastrado!" };
+    }
+
+    const passwordHash = await encryptPassword(password);
+    const createUser = await this.userRepository.create({
+      id: v4(),
+      name,
+      email,
+      telephone: telephoneFormat(telephone),
+      birthDate,
+      password: passwordHash.hash,
+    });
+
+    return {
+      createUser,
+    };
+  }
 }
 
 export { CreateUserUseCase };

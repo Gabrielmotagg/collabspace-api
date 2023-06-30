@@ -14,7 +14,13 @@
     "typeRoots": ["./node_modules/@types", "./src/@types"],
     "baseUrl": "./",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@libs/*": ["./src/libs/*"],
+      "@helpers/*": ["./src/helpers/*"],
+      "@modules/*": ["./src/modules/*"],
+      "@routes/*": ["./src/routes/*"],
+      "@shared/*": ["./src/shared/*"],
+      "@ultils/*": ["./src/ultils/*"],
     }
   }
 }

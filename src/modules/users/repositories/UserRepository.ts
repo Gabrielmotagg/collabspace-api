@@ -25,6 +25,12 @@ class UserRepository implements IUsersRepositories {
       },
     });
   }
+
+  listByEmail(email: string): Promise<IUser | null> {
+    return prisma.users.findFirst({
+      where: { email: { equals: email } },
+    });
+  }
 }
 
 export { UserRepository };
