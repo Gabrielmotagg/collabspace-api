@@ -1,16 +1,16 @@
-import { IRequestUpdateUser } from "@modules/users/dto/users";
+import { IRequestUpdateUser } from "@modules/users/dtos/users";
 import { Request, Response } from "express";
 import { container } from "tsyringe";
 import { UpdateUserUseCase } from "./updateUserUseCase";
 
 class UpdateUserController {
   async handle(request: Request, response: Response) {
-    const { id } = request.params as { id: string };
+    const id = request.usrId;
     const { name, telephone, birthDate } = request.body as IRequestUpdateUser;
 
-    const UpdateUseCase = container.resolve(UpdateUserUseCase);
+    const updateUseCase = container.resolve(UpdateUserUseCase);
 
-    const result = await UpdateUseCase.execute({
+    const result = await updateUseCase.execute({
       id,
       name,
       telephone,
@@ -20,5 +20,4 @@ class UpdateUserController {
     return response.status(result.statusCode).json(result);
   }
 }
-
 export { UpdateUserController };

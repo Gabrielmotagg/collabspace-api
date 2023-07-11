@@ -1,17 +1,14 @@
-import { inject, injectable } from "tsyringe";
+import { AppError } from "@helpers/errorsHandler";
 import { AppResponse } from "@helpers/responseParser";
-import { IRequestUpdateUser } from "@modules/users/dtos/users";
 import { IUsersRepositories } from "@modules/users/iRepositories/IUsersRepositories";
 import { IUuidProvider } from "@shared/container/providers/uuidProvider/IUuidProvider";
-import { AppError } from "@helpers/errorsHandler";
-import { telephoneFormat } from "@utils/formatData";
+import { inject, injectable } from "tsyringe";
 
-interface IRequest extends IRequestUpdateUser {
+interface IRequest {
   id: string;
 }
-
 @injectable()
-class UpdateUserUseCase {
+class InactivateUserUseCase {
   constructor(
     @inject("UserRepository")
     private userRepository: IUsersRepositories,
@@ -19,35 +16,24 @@ class UpdateUserUseCase {
     private uuidProvider: IUuidProvider
   ) {}
 
-  async execute({
-    id,
-    name,
-    telephone,
-    birthDate,
-  }: IRequest): Promise<AppResponse> {
+  async execute({ id }: IRequest): Promise<AppResponse> {
     if (!this.uuidProvider.validateUUID(id)) {
       throw new AppError({
-        message: "ID é inválido!",
+        message: "ID inválido!",
       });
     }
     const listUserById = await this.userRepository.listById(id);
-
     if (!listUserById) {
       throw new AppError({
-        message: "Usuário não encontrado",
+        message: "Usuário não encontrado!",
       });
     }
-    await this.userRepository.update({
-      id,
-      name,
-      telephone: telephoneFormat(telephone),
-      birthDate,
-    });
+    await this.userRepository.inactivate(id, false);
 
     return new AppResponse({
-      message: "Usuário atualizado com sucesso",
+      message: "Desativação bem sucedida!",
     });
   }
 }
 
-export { UpdateUserUseCase };
+export { InactivateUserUseCase };

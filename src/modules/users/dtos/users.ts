@@ -7,6 +7,7 @@ interface IUser {
   password: string;
   avatar_url: string | null;
   created_at: Date;
+  active: boolean;
 }
 
 interface IRequestCreateUser {
@@ -35,7 +36,7 @@ interface IRequestUpdateUser {
   birthDate: string;
 }
 
-interface IupdateUser {
+interface IUpdateUser {
   id: string;
   name?: string;
   telephone?: string | null;
@@ -47,5 +48,5 @@ export {
   ICreateUser,
   IRequestCreateUser,
   IRequestUpdateUser,
-  IupdateUser,
+  IUpdateUser,
 };
